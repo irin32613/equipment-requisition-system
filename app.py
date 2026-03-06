@@ -58,7 +58,6 @@ def requisition_form():
     equipments = Equipment.query.all()
     
     if request.method == 'POST':
-        transaction_type = request.form['transaction_type']
         employee_id = request.form['employee_id']
         employee_name = request.form['employee_name']
         equipment_name = request.form['equipment']
@@ -97,7 +96,6 @@ def restock_form():
     equipments = Equipment.query.all()
 
     if request.method == 'POST':
-        transaction_type = request.form['transaction_type']
         employee_id = request.form['employee_id']
         employee_name = request.form['employee_name']
         equipment_name = request.form['equipment']
