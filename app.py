@@ -1,11 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import pytz
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///equipment.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+THAI_TZ = pytz.timezone('Asia/Bangkok')
 
 
 # โมเดลสำหรับ Stock อุปกรณ์
@@ -24,7 +26,7 @@ class Requisition(db.Model):
     employee_name = db.Column(db.String(100), nullable=False)
     equipment_name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.now)
+    timestamp = db.Column(db.DateTime, default=datetime.now(THAI_TZ))
     
     def __repr__(self):
         return f'<Requisition {self.employee_name} - {self.equipment_name}>'
