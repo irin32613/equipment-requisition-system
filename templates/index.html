@@ -11,8 +11,14 @@
         <h1>ระบบเบิกจ่ายอุปกรณ์</h1>
         
         <div class="nav-menu">
-            <a href="{{ url_for('requisition_form') }}" class="nav-button">ฟอร์มเบิกอุปกรณ์</a>
-            <a href="{{ url_for('history') }}" class="nav-button">ประวัติการเบิก</a>
+            <a href="{{ url_for('requisition_form') }}" class="nav-button">
+                <span class="action-icon">📝</span>
+                ฟอร์มเบิกอุปกรณ์
+            </a>
+            <a href="{{ url_for('history') }}" class="nav-button">
+                <span class="action-icon">📋</span>
+                ประวัติการเบิก
+            </a>
         </div>
         
         <div class="stock-section">
@@ -54,19 +60,6 @@
             {% endif %}
         </div>
         
-        <div class="quick-actions">
-            <h3>การดำเนินการ</h3>
-            <div class="action-buttons">
-                <a href="{{ url_for('requisition_form') }}" class="action-button">
-                    <span class="action-icon">📝</span>
-                    เบิกอุปกรณ์
-                </a>
-                <a href="{{ url_for('history') }}" class="action-button">
-                    <span class="action-icon">📋</span>
-                    ดูประวัติ
-                </a>
-            </div>
-        </div>
     </div>
 </body>
 </html>
