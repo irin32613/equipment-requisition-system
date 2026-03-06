@@ -26,7 +26,7 @@ class Requisition(db.Model):
     employee_name = db.Column(db.String(100), nullable=False)
     equipment_name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.now(THAI_TZ))
+    timestamp = db.Column(db.DateTime, default=datetime.now(THAI_TZ.utc))
     
     def __repr__(self):
         return f'<Requisition {self.employee_name} - {self.equipment_name}>'
@@ -125,6 +125,9 @@ def history():
     
     # เรียงตามเวลาล่าสุดและดึงข้อมูล
     requisitions = query.order_by(Requisition.timestamp.desc()).all()
+
+    for r in requisitions:
+        r.timestamp = r.timestamp.replace(tzinfo=pytz.utc).astimezone(THAI_TZ)
     
     return render_template('history.html', 
                          requisitions=requisitions,
