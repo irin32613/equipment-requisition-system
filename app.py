@@ -7,8 +7,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///equipment.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# ตั้งค่า Timezone ไทย
-THAI_TZ = pytz.timezone('Asia/Bangkok')
 
 # โมเดลสำหรับ Stock อุปกรณ์
 class Equipment(db.Model):
@@ -26,7 +24,7 @@ class Requisition(db.Model):
     employee_name = db.Column(db.String(100), nullable=False)
     equipment_name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.now(THAI_TZ))
+    timestamp = db.Column(db.DateTime, default=datetime.now)
     
     def __repr__(self):
         return f'<Requisition {self.employee_name} - {self.equipment_name}>'
