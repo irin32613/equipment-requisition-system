@@ -95,6 +95,9 @@ def requisition_form():
             
             db.session.add(new_transaction)
             db.session.commit()
+            # เพิ่ม debug
+            print(f"✅ บันทึกสำเร็จ: {new_transaction.id}")
+            print(f"จำนวน transaction ใน DB: {Transaction.query.count()}")
             
             return redirect(url_for('history'))
         else:
