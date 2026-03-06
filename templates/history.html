@@ -95,9 +95,9 @@
                 {% for requisition in requisitions %}
                 <tr>
                     <td>{{ requisition.timestamp.strftime('%d/%m/%Y %H:%M:%S') }}</td>
-                    <td>{{ requisition.type }}</td>
-                    <td>{{ requisition.employee_id }}</td>
                     <td>{{ requisition.transaction_type }}</td>
+                    <td>{{ requisition.employee_id }}</td>
+                    <td>{{ requisition.employee_name }}</td>
                     <td>{{ requisition.equipment_name }}</td>
                     <td>{{ requisition.quantity }}</td>
                 </tr>
