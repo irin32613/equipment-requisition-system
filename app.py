@@ -85,7 +85,7 @@ def requisition_form():
             
             # บันทึกประวัติการเบิก
             new_transaction = Transaction(
-                transaction_type='withdraw',
+                transaction_type='เบิก',
                 employee_id=employee_id,
                 employee_name=employee_name,
                 equipment_name=equipment_name,
@@ -123,7 +123,7 @@ def restock_form():
 
             # บันทึกประวัติการเติม
             new_transaction = Transaction(
-                transaction_type='stock_in',
+                transaction_type='เติม',
                 employee_id=employee_id,
                 employee_name=employee_name,
                 equipment_name=equipment_name,
