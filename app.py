@@ -41,7 +41,8 @@ class Transaction(db.Model):
         }
     
     def __repr__(self):
-        return f'<Requisition {self.employee_name} - {self.equipment_name}>'
+        return f'<Transaction {self.transaction_type} {self.employee_name} - {self.equipment_name}>'
+
 
 # สร้างตารางและข้อมูลเริ่มต้น
 with app.app_context():
