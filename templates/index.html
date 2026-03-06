@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเบิกจ่ายอุปกรณ์</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>ระบบเบิกจ่ายอุปกรณ์</h1>
+        
+        <div class="nav-menu">
+            <a href="{{ url_for('requisition_form') }}" class="nav-button">ฟอร์มเบิกอุปกรณ์</a>
+            <a href="{{ url_for('history') }}" class="nav-button">ประวัติการเบิก</a>
+        </div>
+        
+        <div class="stock-section">
+            <h2>📦 Stock อุปกรณ์ปัจจุบัน</h2>
+            
+            {% if equipments %}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ชื่ออุปกรณ์</th>
+                        <th>จำนวนคงเหลือ</th>
+                        <th>สถานะ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for equipment in equipments %}
+                    <tr>
+                        <td>{{ equipment.name }}</td>
+                        <td>{{ equipment.quantity }}</td>
+                        <td>
+                            {% if equipment.quantity <= 0 %}
+                                <span class="status-badge status-danger">หมด</span>
+                            {% elif equipment.quantity <= 5 %}
+                                <span class="status-badge status-warning">ใกล้หมด</span>
+                            {% else %}
+                                <span class="status-badge status-success">ปกติ</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <div class="stock-summary">
+                <p>รวมทั้งหมด: {{ equipments|length }} รายการ</p>
+            </div>
+            {% else %}
+            <p class="no-data">ไม่มีข้อมูลอุปกรณ์ในระบบ</p>
+            {% endif %}
+        </div>
+        
+        <div class="quick-actions">
+            <h3>การดำเนินการ</h3>
+            <div class="action-buttons">
+                <a href="{{ url_for('requisition_form') }}" class="action-button">
+                    <span class="action-icon">📝</span>
+                    เบิกอุปกรณ์
+                </a>
+                <a href="{{ url_for('history') }}" class="action-button">
+                    <span class="action-icon">📋</span>
+                    ดูประวัติ
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

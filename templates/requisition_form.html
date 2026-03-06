@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ฟอร์มเบิกอุปกรณ์</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>ฟอร์มเบิกอุปกรณ์</h1>
+        
+        <div class="nav-menu">
+            <a href="{{ url_for('index') }}" class="nav-button">หน้าแรก</a>
+            <a href="{{ url_for('history') }}" class="nav-button">ประวัติการเบิก</a>
+        </div>
+        
+        {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+        {% endif %}
+        
+        <form method="POST" class="requisition-form">
+            <div class="form-group">
+                <label for="employee_id">รหัสพนักงาน:</label>
+                <input type="text" id="employee_id" name="employee_id" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="employee_name">ชื่อพนักงาน:</label>
+                <input type="text" id="employee_name" name="employee_name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="equipment">อุปกรณ์:</label>
+                <select id="equipment" name="equipment" required>
+                    <option value="">กรุณาเลือกอุปกรณ์</option>
+                    {% for equipment in equipments %}
+                    <option value="{{ equipment.name }}">{{ equipment.name }} (คงเหลือ: {{ equipment.quantity }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="quantity">จำนวนที่ต้องการเบิก:</label>
+                <input type="number" id="quantity" name="quantity" min="1" required>
+            </div>
+            
+            <button type="submit" class="submit-button">ยืนยันการเบิก</button>
+        </form>
+    </div>
+</body>
+</html>

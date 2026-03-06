@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประวัติการเบิกอุปกรณ์</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>ประวัติการเบิกอุปกรณ์</h1>
+        
+        <div class="nav-menu">
+            <a href="{{ url_for('index') }}" class="nav-button">หน้าแรก</a>
+            <a href="{{ url_for('requisition_form') }}" class="nav-button">ฟอร์มเบิกอุปกรณ์</a>
+        </div>
+        
+        <!-- ฟอร์มค้นหา -->
+        <div class="search-section">
+            <h2>🔍 ค้นหาประวัติการเบิก</h2>
+            <form method="GET" action="{{ url_for('history') }}" class="search-form">
+                <div class="search-row">
+                    <div class="search-group">
+                        <label for="start_date">ตั้งแต่วันที่:</label>
+                        <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+                    </div>
+                    
+                    <div class="search-group">
+                        <label for="end_date">ถึงวันที่:</label>
+                        <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+                    </div>
+                    
+                    <div class="search-group">
+                        <label for="equipment">อุปกรณ์:</label>
+                        <select id="equipment" name="equipment">
+                            <option value="">ทั้งหมด</option>
+                            {% for equipment in equipments %}
+                            <option value="{{ equipment.name }}" {% if equipment_filter == equipment.name %}selected{% endif %}>
+                                {{ equipment.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="search-group">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="search-button">ค้นหา</button>
+                    </div>
+                    
+                    <div class="search-group">
+                        <label>&nbsp;</label>
+                        <a href="{{ url_for('history') }}" class="reset-button">รีเซ็ต</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <!-- แสดงจำนวนผลลัพธ์ -->
+        <div class="result-info">
+            <p>พบทั้งหมด {{ requisitions|length }} รายการ</p>
+        </div>
+        
+        <!-- ตารางแสดงประวัติ -->
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>วันที่-เวลา</th>
+                    <th>รหัสพนักงาน</th>
+                    <th>ชื่อพนักงาน</th>
+                    <th>อุปกรณ์</th>
+                    <th>จำนวน</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for requisition in requisitions %}
+                <tr>
+                    <td>{{ requisition.timestamp.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                    <td>{{ requisition.employee_id }}</td>
+                    <td>{{ requisition.employee_name }}</td>
+                    <td>{{ requisition.equipment_name }}</td>
+                    <td>{{ requisition.quantity }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        {% if not requisitions %}
+        <p class="no-data">ไม่พบประวัติการเบิกตามที่ค้นหา</p>
+        {% endif %}
+    </div>
+</body>
+</html>
