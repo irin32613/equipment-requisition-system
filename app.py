@@ -121,7 +121,7 @@ def restock_form():
         # ตรวจสอบ Stock
         equipment = Equipment.query.filter_by(name=equipment_name).first()
         
-        if equipment and equipment.quantity >= quantity:
+        if equipment:
             # อัปเดต Stock
             equipment.quantity += quantity
 
