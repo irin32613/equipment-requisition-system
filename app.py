@@ -7,6 +7,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///equipment.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# ตั้งค่า Timezone ไทย
+THAI_TZ = pytz.timezone('Asia/Bangkok')
+
 # โมเดลสำหรับ Stock อุปกรณ์
 class Equipment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -23,7 +26,7 @@ class Requisition(db.Model):
     employee_name = db.Column(db.String(100), nullable=False)
     equipment_name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.now)
+    timestamp = db.Column(db.DateTime, default=datetime.now(THAI_TZ))
     
     def __repr__(self):
         return f'<Requisition {self.employee_name} - {self.equipment_name}>'
@@ -98,7 +101,7 @@ def history():
     end_date = request.args.get('end_date', '')
     equipment_filter = request.args.get('equipment', '')
     
-    # สร้าง query พื้นฐาน
+    # สร้าง query พื้นฐาน เรียงรายการล่าสุดไปเก่าสุด
     query = Requisition.query
     
     # กรองตามวันที่ (ถ้ามี)
