@@ -26,7 +26,7 @@ class Requisition(db.Model):
     employee_name = db.Column(db.String(100), nullable=False)
     equipment_name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.now(THAI_TZ.utc))
+    timestamp = db.Column(db.DateTime, default=datetime.now)
     
     def __repr__(self):
         return f'<Requisition {self.employee_name} - {self.equipment_name}>'
