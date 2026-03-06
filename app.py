@@ -45,22 +45,7 @@ class Transaction(db.Model):
     def __repr__(self):
         return f'<Requisition {self.employee_name} - {self.equipment_name}>'
 
-# สร้างตารางและข้อมูลเริ่มต้น
-with app.app_context():
-    db.create_all()
     
-    # เพิ่มข้อมูลอุปกรณ์เริ่มต้นถ้ายังไม่มี
-    if Equipment.query.count() == 0:
-        initial_equipment = [
-            Equipment(name='คอมพิวเตอร์', quantity=10),
-            Equipment(name='เมาส์', quantity=50),
-            Equipment(name='คีย์บอร์ด', quantity=30),
-            Equipment(name='จอภาพ', quantity=15),
-            Equipment(name='เครื่องพิมพ์', quantity=5)
-        ]
-        db.session.add_all(initial_equipment)
-        db.session.commit()
-
 # หน้าแรก - แสดง Stock ปัจจุบัน
 @app.route('/')
 def index():
