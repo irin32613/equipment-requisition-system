@@ -37,8 +37,6 @@ class Transaction(db.Model):
             'employee_name': self.employee_name,
             'equipment_name': self.equipment_name,
             'quantity': self.quantity,
-            'note': self.note,
-            'created_by': self.created_by,
             'timestamp': self.timestamp.strftime('%d/%m/%Y %H:%M:%S')
         }
     
