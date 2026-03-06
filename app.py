@@ -19,14 +19,28 @@ class Equipment(db.Model):
     def __repr__(self):
         return f'<Equipment {self.name}>'
 
-# โมเดลสำหรับประวัติการเบิก
-class Requisition(db.Model):
+# โมเดลสำหรับประวัติการเบิกและเติม
+class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    transaction_type = db.Column(db.String(20), nullable=False)
     employee_id = db.Column(db.String(50), nullable=False)
     employee_name = db.Column(db.String(100), nullable=False)
     equipment_name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.now)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'transaction_type': self.transaction_type,
+            'employee_id': self.employee_id,
+            'employee_name': self.employee_name,
+            'equipment_name': self.equipment_name,
+            'quantity': self.quantity,
+            'note': self.note,
+            'created_by': self.created_by,
+            'timestamp': self.timestamp.strftime('%d/%m/%Y %H:%M:%S')
+        }
     
     def __repr__(self):
         return f'<Requisition {self.employee_name} - {self.equipment_name}>'
@@ -72,14 +86,15 @@ def requisition_form():
             equipment.quantity -= quantity
             
             # บันทึกประวัติการเบิก
-            new_requisition = Requisition(
+            new_transaction = Transaction(
+                transaction_type='withdraw',
                 employee_id=employee_id,
                 employee_name=employee_name,
                 equipment_name=equipment_name,
                 quantity=quantity
             )
             
-            db.session.add(new_requisition)
+            db.session.add(new_transaction)
             db.session.commit()
             
             return redirect(url_for('history'))
@@ -90,7 +105,45 @@ def requisition_form():
     
     return render_template('requisition_form.html', equipments=equipments)
 
-# หน้าประวัติการเบิก (รองรับการค้นหา)
+# ฟอร์มเติม Stock
+@app.route('/restock', methods=['GET', 'POST'])
+def restock_form():
+    equipments = Equipment.query.all()
+
+    if request.method == 'POST':
+        employee_id = request.form['employee_id']
+        employee_name = request.form['employee_name']
+        equipment_name = request.form['equipment']
+        quantity = int(request.form['quantity'])
+        
+        # ตรวจสอบ Stock
+        equipment = Equipment.query.filter_by(name=equipment_name).first()
+        
+        if equipment and equipment.quantity >= quantity:
+            # อัปเดต Stock
+            equipment.quantity += quantity
+
+            # บันทึกประวัติการเติม
+            new_transaction = Transaction(
+                transaction_type='stock_in',
+                employee_id=employee_id,
+                employee_name=employee_name,
+                equipment_name=equipment_name,
+                quantity=quantity
+            )
+            
+            db.session.add(new_transaction)
+            db.session.commit()
+            
+            return redirect(url_for('history'))
+        else:
+            return render_template('restock_form.html', 
+                                 equipments=equipments, 
+                                 error='ไม่พบอุปกรณ์')
+    
+    return render_template('restock_form.html', equipments=equipments)
+
+# หน้าค้นหาประวัติการเบิกและเติม
 @app.route('/history', methods=['GET', 'POST'])
 def history():
     # ดึงข้อมูลอุปกรณ์ทั้งหมดสำหรับ dropdown
@@ -100,9 +153,10 @@ def history():
     start_date = request.args.get('start_date', '')
     end_date = request.args.get('end_date', '')
     equipment_filter = request.args.get('equipment', '')
+    type_filter = request.args.get('type', '')
     
     # สร้าง query พื้นฐาน เรียงรายการล่าสุดไปเก่าสุด
-    query = Requisition.query
+    query = Transaction.query
     
     # กรองตามวันที่ (ถ้ามี)
     if start_date and end_date:
@@ -110,21 +164,26 @@ def history():
         end = datetime.strptime(end_date, '%Y-%m-%d')
         # เพิ่มเวลาสิ้นสุดเป็น 23:59:59 ของวันนั้น
         end = end.replace(hour=23, minute=59, second=59)
-        query = query.filter(Requisition.timestamp.between(start, end))
+        query = query.filter(Transaction.timestamp.between(start, end))
     elif start_date:
         start = datetime.strptime(start_date, '%Y-%m-%d')
-        query = query.filter(Requisition.timestamp >= start)
+        query = query.filter(Transaction.timestamp >= start)
     elif end_date:
         end = datetime.strptime(end_date, '%Y-%m-%d')
         end = end.replace(hour=23, minute=59, second=59)
-        query = query.filter(Requisition.timestamp <= end)
+        query = query.filter(Transaction.timestamp <= end)
     
     # กรองตามอุปกรณ์ (ถ้ามี)
     if equipment_filter:
-        query = query.filter(Requisition.equipment_name == equipment_filter)
+        query = query.filter(Transaction.equipment_name == equipment_filter)
     
+    # กรองตามประเภท
+    if type_filter:
+        query = query.filter(Transaction.transaction_type == type_filter)
+
     # เรียงตามเวลาล่าสุดและดึงข้อมูล
-    requisitions = query.order_by(Requisition.timestamp.desc()).all()
+    requisitions = query.order_by(Transaction.timestamp.desc()).all()
+
 
     for r in requisitions:
         r.timestamp = r.timestamp.replace(tzinfo=pytz.utc).astimezone(THAI_TZ)
@@ -134,7 +193,8 @@ def history():
                          equipments=equipments,
                          start_date=start_date,
                          end_date=end_date,
-                         equipment_filter=equipment_filter)
+                         equipment_filter=equipment_filter,
+                         type_filter=type_filter)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)

@@ -3,23 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ประวัติการเบิกอุปกรณ์</title>
+    <title>ประวัติการทำรายการทั้งหมด</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>ประวัติการเบิกอุปกรณ์</h1>
+        <h1>🧾 ประวัติการทำรายการทั้งหมด</h1>
         
         <div class="nav-menu">
-            <a href="{{ url_for('index') }}" class="nav-button">หน้าแรก</a>
-            <a href="{{ url_for('requisition_form') }}" class="nav-button">ฟอร์มเบิกอุปกรณ์</a>
+            <a href="{{ url_for('index') }}" class="nav-button">
+                <span class="action-icon">🏠</span>
+                หน้าแรก
+            </a>
+            <a href="{{ url_for('requisition_form') }}" class="nav-button">
+                <span class="action-icon">📝</span>
+                ฟอร์มเบิกอุปกรณ์
+            </a>
+            <a href="{{ url_for('restock_form') }}" class="nav-button">
+                <span class="action-icon">📝</span>
+                ฟอร์มเติมอุปกรณ์
+            </a> 
         </div>
         
         <!-- ฟอร์มค้นหา -->
         <div class="search-section">
-            <h2>🔍 ค้นหาประวัติการเบิก</h2>
+            <h2>🔍 ค้นหาประวัติ</h2>
             <form method="GET" action="{{ url_for('history') }}" class="search-form">
                 <div class="search-row">
+                    <div class="search-group">
+                        <label for="type">ประเภท</label>
+                        <select id="type" name="type">
+                            <option value="">ทั้งหมด</option>
+                            <option value="withdraw">เบิก</option>
+                            <option value="stock_in">เติม</option>
+                        </select>
+                    </div>
+
                     <div class="search-group">
                         <label for="start_date">ตั้งแต่วันที่:</label>
                         <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
@@ -65,6 +84,7 @@
             <thead>
                 <tr>
                     <th>วันที่-เวลา</th>
+                    <th>ประเภท</th>
                     <th>รหัสพนักงาน</th>
                     <th>ชื่อพนักงาน</th>
                     <th>อุปกรณ์</th>
@@ -75,6 +95,7 @@
                 {% for requisition in requisitions %}
                 <tr>
                     <td>{{ requisition.timestamp.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                    <td>{{ requisition.type }}</td>
                     <td>{{ requisition.employee_id }}</td>
                     <td>{{ requisition.employee_name }}</td>
                     <td>{{ requisition.equipment_name }}</td>
@@ -85,7 +106,7 @@
         </table>
         
         {% if not requisitions %}
-        <p class="no-data">ไม่พบประวัติการเบิกตามที่ค้นหา</p>
+        <p class="no-data">ไม่พบประวัติตามที่ค้นหา</p>
         {% endif %}
     </div>
 </body>
