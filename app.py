@@ -62,7 +62,7 @@ def requisition_form():
                     employee_name,
                     equipment_name,
                     quantity,
-                    datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    datetime.now(THAI_TZ).strftime('%Y-%m-%d %H:%M:%S')
                 ],table_range="A1")
 
                 print("✅ บันทึกสำเร็จ")
@@ -107,7 +107,7 @@ def restock_form():
                 employee_name,
                 equipment_name,
                 quantity,
-                datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                datetime.now(THAI_TZ).strftime('%Y-%m-%d %H:%M:%S')
             ],table_range="A1")
 
             return redirect(url_for('history'))
@@ -155,7 +155,7 @@ def history():
         if type_filter and r['transaction_type'] != type_filter:
             continue
 
-        r['timestamp'] = timestamp.replace(tzinfo=pytz.utc).astimezone(THAI_TZ)
+        r['timestamp'] = timestamp
 
         filtered.append(r)
 
