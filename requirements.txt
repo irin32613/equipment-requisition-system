@@ -3,3 +3,4 @@ Flask-SQLAlchemy==3.0.5
 gunicorn==21.2.0
 pytz
 gspread
+oauth2client
