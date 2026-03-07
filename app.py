@@ -3,6 +3,8 @@ from datetime import datetime
 import pytz
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import os
+import json
 
 app = Flask(__name__)
 THAI_TZ = pytz.timezone('Asia/Bangkok')
@@ -14,7 +16,8 @@ scope = [
 "https://www.googleapis.com/auth/drive"
 ]
 
-creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+creds_dict = json.loads(os.environ["GOOGLE_CREDENTIALS"])
+creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
 
 sheet_equipment = client.open("EquipmentDatabase").worksheet("equipment")
